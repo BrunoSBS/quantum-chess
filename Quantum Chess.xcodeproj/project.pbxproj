@@ -16,6 +16,9 @@
 		9284A3FF2BD56B4600B0B3B3 /* Quantum_ChessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284A3FE2BD56B4600B0B3B3 /* Quantum_ChessTests.swift */; };
 		9284A4092BD56B4600B0B3B3 /* Quantum_ChessUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284A4082BD56B4600B0B3B3 /* Quantum_ChessUITests.swift */; };
 		9284A40B2BD56B4600B0B3B3 /* Quantum_ChessUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284A40A2BD56B4600B0B3B3 /* Quantum_ChessUITestsLaunchTests.swift */; };
+		9284A4182BD56B9500B0B3B3 /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284A4172BD56B9500B0B3B3 /* BoardView.swift */; };
+		9284A41A2BD56BC700B0B3B3 /* ChessPiece.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284A4192BD56BC700B0B3B3 /* ChessPiece.swift */; };
+		9284A41C2BD56C2700B0B3B3 /* ChessEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284A41B2BD56C2700B0B3B3 /* ChessEngine.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +52,9 @@
 		9284A4042BD56B4600B0B3B3 /* Quantum ChessUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Quantum ChessUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9284A4082BD56B4600B0B3B3 /* Quantum_ChessUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quantum_ChessUITests.swift; sourceTree = "<group>"; };
 		9284A40A2BD56B4600B0B3B3 /* Quantum_ChessUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quantum_ChessUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		9284A4172BD56B9500B0B3B3 /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
+		9284A4192BD56BC700B0B3B3 /* ChessPiece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChessPiece.swift; sourceTree = "<group>"; };
+		9284A41B2BD56C2700B0B3B3 /* ChessEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChessEngine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +112,9 @@
 				9284A3F02BD56B4600B0B3B3 /* Assets.xcassets */,
 				9284A3F22BD56B4600B0B3B3 /* LaunchScreen.storyboard */,
 				9284A3F52BD56B4600B0B3B3 /* Info.plist */,
+				9284A4172BD56B9500B0B3B3 /* BoardView.swift */,
+				9284A4192BD56BC700B0B3B3 /* ChessPiece.swift */,
+				9284A41B2BD56C2700B0B3B3 /* ChessEngine.swift */,
 			);
 			path = "Quantum Chess";
 			sourceTree = "<group>";
@@ -258,8 +267,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9284A41C2BD56C2700B0B3B3 /* ChessEngine.swift in Sources */,
 				9284A3EC2BD56B4500B0B3B3 /* ViewController.swift in Sources */,
+				9284A4182BD56B9500B0B3B3 /* BoardView.swift in Sources */,
 				9284A3E82BD56B4500B0B3B3 /* AppDelegate.swift in Sources */,
+				9284A41A2BD56BC700B0B3B3 /* ChessPiece.swift in Sources */,
 				9284A3EA2BD56B4500B0B3B3 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
