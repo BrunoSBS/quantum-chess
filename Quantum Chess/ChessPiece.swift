@@ -13,4 +13,9 @@ struct ChessPiece: Hashable {
 
 }
 
+struct ChessHalfPiece: Hashable {
+    let col: Int
+    let row: Int
+    let ImageName: String
+}
 
