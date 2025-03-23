@@ -26,7 +26,7 @@ class BoardView: UIView {
     // piece moving
     var colTouchBegin = -1
     var rowTouchBegin = -1
-    
+    var upperLeftTouchBegin = true //Bool for upperleft or lower-right quadrant
     // moving piece image that tracks mouse
     var movingPieceImage: UIImage? = nil
     var movingPieceX: CGFloat = -1
@@ -53,7 +53,7 @@ class BoardView: UIView {
         //TODO: fix touches to left and above board counting as on row/col zero due to integer casting
         colTouchBegin = Int( (fingerLocation.x - BoardAnchorX)/squareSize )
         rowTouchBegin = Int( (fingerLocation.y - BoardAnchorY)/squareSize )
-        
+        upperLeftTouchBegin = (fingerLocation.x - BoardAnchorX).truncatingRemainder(dividingBy: squareSize) + (fingerLocation.y - BoardAnchorY ).truncatingRemainder(dividingBy: squareSize) < squareSize
 
         // start moving image of chess piece where touch begins
         movingPieceX = fingerLocation.x - squareSize/2
