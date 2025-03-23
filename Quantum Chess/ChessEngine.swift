@@ -89,7 +89,12 @@ struct ChessEngine {
         
         pieces.insert(ChessPiece(col: 0, row: 7, ImageName: "Rook-White",isWhite: true))
         pieces.insert(ChessPiece(col: 1, row: 7, ImageName: "Knight-White",isWhite: true))
-        pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Bishop-White",isWhite: true))
+        //pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Bishop-White",isWhite: true))
+        
+        pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Half1Bishop-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Half2Bishop-White",isWhite: true))
+        
+        
         pieces.insert(ChessPiece(col: 3, row: 7, ImageName: "Queen-White",isWhite: true))
         pieces.insert(ChessPiece(col: 4, row: 7, ImageName: "King-White",isWhite: true))
         pieces.insert(ChessPiece(col: 5, row: 7, ImageName: "Bishop-White",isWhite: true))
