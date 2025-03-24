@@ -11,10 +11,17 @@ struct ChessEngine {
     var pieces: Set<ChessPiece> = Set<ChessPiece>()
     var whitesTurn: Bool = true
     
+<<<<<<< HEAD
     
     mutating func movePiece(fromCol: Int, fromRow: Int, toCol: Int, toRow: Int){
         
         
+=======
+    mutating func movePiece(fromCol: Int, fromRow: Int, toCol: Int, toRow: Int){
+        
+        
+        
+>>>>>>> working
         // Check there is a piece at the place we started our touch
         guard let movingPiece = pieceAt(col: fromCol, row: fromRow) else {
             return
@@ -26,7 +33,11 @@ struct ChessEngine {
             return
         }
         
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> working
         // Check if we move to allied piece - if so, we cancel move, if not, we remove it
         if let targetPiece = pieceAt(col: toCol, row: toRow){
             if (targetPiece.isWhite == movingPiece.isWhite){
@@ -35,7 +46,11 @@ struct ChessEngine {
             pieces.remove(targetPiece)
         }
         
+<<<<<<< HEAD
         
+=======
+    
+>>>>>>> working
         // Remove piece at start, add it at end TODO: Understand why we can't just change position
         pieces.remove(movingPiece)
         pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: movingPiece.ImageName,isWhite: movingPiece.isWhite))
@@ -43,7 +58,10 @@ struct ChessEngine {
         // If we've made it here, hopefully we made a move
         whitesTurn = !whitesTurn
         
+<<<<<<< HEAD
         
+=======
+>>>>>>> working
     }
     
     
@@ -90,7 +108,16 @@ struct ChessEngine {
         
         pieces.insert(ChessPiece(col: 0, row: 7, ImageName: "Rook-White",isWhite: true))
         pieces.insert(ChessPiece(col: 1, row: 7, ImageName: "Knight-White",isWhite: true))
+<<<<<<< HEAD
         pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Bishop-White",isWhite: true))
+=======
+        //pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Bishop-White",isWhite: true))
+        
+        pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Half1Bishop-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Half2Bishop-White",isWhite: true))
+        
+        
+>>>>>>> working
         pieces.insert(ChessPiece(col: 3, row: 7, ImageName: "Queen-White",isWhite: true))
         pieces.insert(ChessPiece(col: 4, row: 7, ImageName: "King-White",isWhite: true))
         pieces.insert(ChessPiece(col: 5, row: 7, ImageName: "Bishop-White",isWhite: true))
@@ -101,6 +128,12 @@ struct ChessEngine {
             pieces.insert(ChessPiece(col: i, row: 1, ImageName: "Pawn-Black",isWhite: false))
             pieces.insert(ChessPiece(col: i, row: 6, ImageName: "Pawn-White",isWhite: true))
         }
+<<<<<<< HEAD
     }
 }
 
+=======
+        
+    }
+}
+>>>>>>> working
