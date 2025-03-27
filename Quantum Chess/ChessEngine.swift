@@ -27,12 +27,12 @@ struct ChessEngine {
         }
         
 
-        // Check if we move to allied piece - if so, we cancel move, if not, we remove it
+        // Check if we move to allied piece - if so, we cancel move
         if let targetPiece = pieceAt(col: toCol, row: toRow){
             if (targetPiece.isWhite == movingPiece.isWhite){
                 return
             }
-            pieces.remove(targetPiece)
+            //pieces.remove(targetPiece)
         }
         
     
@@ -78,32 +78,62 @@ struct ChessEngine {
         whitesTurn = true
         
         
-        pieces.insert(ChessPiece(col: 0, row: 0, ImageName: "Rook-Black",isWhite: false))
-        pieces.insert(ChessPiece(col: 1, row: 0, ImageName: "Knight-Black",isWhite: false))
-        pieces.insert(ChessPiece(col: 2, row: 0, ImageName: "Bishop-Black",isWhite: false))
-        pieces.insert(ChessPiece(col: 3, row: 0, ImageName: "Queen-Black",isWhite: false))
-        pieces.insert(ChessPiece(col: 4, row: 0, ImageName: "King-Black",isWhite: false))
-        pieces.insert(ChessPiece(col: 5, row: 0, ImageName: "Bishop-Black",isWhite: false))
+        //pieces.insert(ChessPiece(col: 0, row: 0, ImageName: "Rook-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 0, row: 0, ImageName: "Half1Rook-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 0, row: 0, ImageName: "Half2Rook-Black",isWhite: false))
+        //pieces.insert(ChessPiece(col: 1, row: 0, ImageName: "Knight-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 1, row: 0, ImageName: "Half1Knight-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 1, row: 0, ImageName: "Half2Knight-Black",isWhite: false))
+        //pieces.insert(ChessPiece(col: 2, row: 0, ImageName: "Bishop-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 2, row: 0, ImageName: "Half1Bishop-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 2, row: 0, ImageName: "Half2Bishop-Black",isWhite: false))
+        //pieces.insert(ChessPiece(col: 3, row: 0, ImageName: "Queen-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 3, row: 0, ImageName: "Half1Queen-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 3, row: 0, ImageName: "Half2Queen-Black",isWhite: false))
+        //pieces.insert(ChessPiece(col: 4, row: 0, ImageName: "King-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 4, row: 0, ImageName: "Half1King-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 4, row: 0, ImageName: "Half2King-Black",isWhite: false))
+       // pieces.insert(ChessPiece(col: 5, row: 0, ImageName: "Bishop-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 5, row: 0, ImageName: "Half1Bishop-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 5, row: 0, ImageName: "Half2Bishop-Black",isWhite: false))
+        //pieces.insert(ChessPiece(col: 6, row: 0, ImageName: "Knight-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 6, row: 0, ImageName: "Half1Knight-Black",isWhite: false))
         pieces.insert(ChessPiece(col: 6, row: 0, ImageName: "Knight-Black",isWhite: false))
-        pieces.insert(ChessPiece(col: 7, row: 0, ImageName: "Rook-Black",isWhite: false))
-        
-        pieces.insert(ChessPiece(col: 0, row: 7, ImageName: "Rook-White",isWhite: true))
-        pieces.insert(ChessPiece(col: 1, row: 7, ImageName: "Knight-White",isWhite: true))
+        //pieces.insert(ChessPiece(col: 7, row: 0, ImageName: "Rook-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 7, row: 0, ImageName: "Half1Rook-Black",isWhite: false))
+        pieces.insert(ChessPiece(col: 7, row: 0, ImageName: "Half2Rook-Black",isWhite: false))
+        //pieces.insert(ChessPiece(col: 0, row: 7, ImageName: "Rook-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 0, row: 7, ImageName: "Half1Rook-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 0, row: 7, ImageName: "Half2Rook-White",isWhite: true))
+        //pieces.insert(ChessPiece(col: 1, row: 7, ImageName: "Knight-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 1, row: 7, ImageName: "Half1Knight-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 1, row: 7, ImageName: "Half2Knight-White",isWhite: true))
         //pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Bishop-White",isWhite: true))
-        
         pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Half1Bishop-White",isWhite: true))
         pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Half2Bishop-White",isWhite: true))
-        
-        
-        pieces.insert(ChessPiece(col: 3, row: 7, ImageName: "Queen-White",isWhite: true))
-        pieces.insert(ChessPiece(col: 4, row: 7, ImageName: "King-White",isWhite: true))
-        pieces.insert(ChessPiece(col: 5, row: 7, ImageName: "Bishop-White",isWhite: true))
-        pieces.insert(ChessPiece(col: 6, row: 7, ImageName: "Knight-White",isWhite: true))
-        pieces.insert(ChessPiece(col: 7, row: 7, ImageName: "Rook-White",isWhite: true))
+        //pieces.insert(ChessPiece(col: 3, row: 7, ImageName: "Queen-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 3, row: 7, ImageName: "Half1Queen-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 3, row: 7, ImageName: "Half2Queen-White",isWhite: true))
+        //pieces.insert(ChessPiece(col: 4, row: 7, ImageName: "King-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 4, row: 7, ImageName: "Half1King-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 4, row: 7, ImageName: "Half2King-White",isWhite: true))
+        //pieces.insert(ChessPiece(col: 5, row: 7, ImageName: "Bishop-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 5, row: 7, ImageName: "Half1Bishop-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 5, row: 7, ImageName: "Half2Bishop-White",isWhite: true))
+       // pieces.insert(ChessPiece(col: 6, row: 7, ImageName: "Knight-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 6, row: 7, ImageName: "Half1Knight-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 6, row: 7, ImageName: "Half2Knight-White",isWhite: true))
+        //pieces.insert(ChessPiece(col: 7, row: 7, ImageName: "Rook-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 7, row: 7, ImageName: "Half1Rook-White",isWhite: true))
+        pieces.insert(ChessPiece(col: 7, row: 7, ImageName: "Half2Rook-White",isWhite: true))
         
         for i in 0..<8{
-            pieces.insert(ChessPiece(col: i, row: 1, ImageName: "Pawn-Black",isWhite: false))
-            pieces.insert(ChessPiece(col: i, row: 6, ImageName: "Pawn-White",isWhite: true))
+            //pieces.insert(ChessPiece(col: i, row: 1, ImageName: "Pawn-Black",isWhite: false))
+            pieces.insert(ChessPiece(col: i, row: 1, ImageName: "Half1Pawn-Black",isWhite: false))
+            pieces.insert(ChessPiece(col: i, row: 1, ImageName: "Half2Pawn-Black",isWhite: false))
+            //pieces.insert(ChessPiece(col: i, row: 6, ImageName: "Pawn-White",isWhite: true))
+            pieces.insert(ChessPiece(col: i, row: 6, ImageName: "Half1Pawn-White",isWhite: true))
+            pieces.insert(ChessPiece(col: i, row: 6, ImageName: "Half2Pawn-White",isWhite: true))
         }
         
     }
