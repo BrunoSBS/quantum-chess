@@ -14,7 +14,6 @@ struct ChessEngine {
     mutating func movePiece(fromCol: Int, fromRow: Int, isLeftBegin: Bool, toCol: Int, toRow: Int){
         
         
-        //TODO: work out how to deal with there being two pieces at each square
         // Check there is a piece at the place we started our touch
         guard let movingPiece = pieceAt(col: fromCol, row: fromRow, isLeft: isLeftBegin) else {
             return
@@ -27,18 +26,48 @@ struct ChessEngine {
         }
         
 
-        // Check if we move to allied piece - if so, we cancel move
-//        if let targetPiece = pieceAt(col: toCol, row: toRow, isLeft: <#Bool#>){
-//            if (targetPiece.isWhite == movingPiece.isWhite){
-//                return
-//            }
-//            //pieces.remove(targetPiece)
-//        }
-        
+        // Check occupants of target square
+        if let targetPieceLeft = pieceAt(col: toCol, row: toRow, isLeft: true){
+            print(targetPieceLeft.ImageName)
+            if let targetPieceRight = pieceAt(col: toCol, row: toRow, isLeft: false){
+                print(targetPieceRight.ImageName)
+                print(" have found two pieces in square")
+                // Check if the target square is fully occupied by allied half-pieces - if so, we cancel move
+                if (targetPieceLeft.isWhite == movingPiece.isWhite && targetPieceRight.isWhite == movingPiece.isWhite){
+                    return
+                }
+                
+                // if target square is half-occupied, occupy other half
+                if (false){
+                    //
+                }
+                // if target square is occupied by two opposing pieces,
+                if (false){
+                    //
+                }
+                
+                // if target square is occupied by two opposite pieces, replace the one of opposite colour
+                if (targetPieceLeft.isWhite != targetPieceRight.isWhite){
+                    print("left not right")
+                    if (targetPieceLeft.isWhite != movingPiece.isWhite){
+                        pieces.remove(targetPieceLeft)
+                        print("left deleted")
+                    }
+                    if (targetPieceRight.isWhite != movingPiece.isWhite){
+                        pieces.remove(targetPieceRight)
+                        print("right deleted")
+                    }
+                }
+                
+            }
+            
+            //pieces.remove(targetPiece)
+        }
+        print("completed check of target square")
     
         // Remove piece at start, add it at end TODO: Understand why we can't just change position
         pieces.remove(movingPiece)
-        pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: true))
+        pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: isLeftBegin))
         // TODO: need to insert piece in left or right depending if space is already occupied
         
         //TODO: only switch turn after two half-moves: this probably requires a second bool and two different moveFirstHalfPiece and moveSecondHalfPiece functions
@@ -66,7 +95,7 @@ struct ChessEngine {
     
     func pieceAt(col: Int, row: Int, isLeft: Bool) -> ChessPiece?{
         for piece in pieces {
-            if col == piece.col && row == piece.row && isLeft==piece.isLeft {
+            if col == piece.col && row == piece.row && isLeft == piece.isLeft {
                 
                 return piece
             }
@@ -105,7 +134,6 @@ struct ChessEngine {
         pieces.insert(ChessPiece(col: 3, row: 7, ImageName: "Half2Queen-White",isWhite: true, isLeft: false))
         pieces.insert(ChessPiece(col: 4, row: 7, ImageName: "Half1King-White",isWhite: true, isLeft: true))
         pieces.insert(ChessPiece(col: 4, row: 7, ImageName: "Half2King-White",isWhite: true, isLeft: false))
-        //pieces.insert(ChessPiece(col: 5, row: 7, ImageName: "Bishop-White",isWhite: true))
         pieces.insert(ChessPiece(col: 5, row: 7, ImageName: "Half1Bishop-White",isWhite: true, isLeft: true))
         pieces.insert(ChessPiece(col: 5, row: 7, ImageName: "Half2Bishop-White",isWhite: true, isLeft: false))
         pieces.insert(ChessPiece(col: 6, row: 7, ImageName: "Half1Knight-White",isWhite: true, isLeft: true))
