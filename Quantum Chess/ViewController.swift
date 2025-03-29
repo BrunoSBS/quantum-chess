@@ -26,14 +26,14 @@ class ViewController: UIViewController, ChessDelegate {
     }
     
     // move piece using chessEngine, then update pieces and redraw screen
-    func movePiece(fromCol: Int, fromRow: Int, toCol: Int, toRow: Int){
-        chessEngine.movePiece(fromCol: fromCol, fromRow: fromRow, toCol: toCol, toRow: toRow)
+    func movePiece(fromCol: Int, fromRow: Int, isLeftBegin: Bool, toCol: Int, toRow: Int){
+        chessEngine.movePiece(fromCol: fromCol, fromRow: fromRow, isLeftBegin: isLeftBegin, toCol: toCol, toRow: toRow)
         boardView.pieces = chessEngine.pieces
         boardView.setNeedsDisplay()
     }
     
-    func pieceAt(col: Int, row: Int) -> ChessPiece? {
-        chessEngine.pieceAt(col: col, row: row)
+    func pieceAt(col: Int, row: Int,isLeft: Bool) -> ChessPiece? {
+        chessEngine.pieceAt(col: col, row: row, isLeft: isLeft)
     }
 
     

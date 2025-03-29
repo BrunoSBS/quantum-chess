@@ -26,11 +26,16 @@ class BoardView: UIView {
     // piece moving
     var colTouchBegin = -1
     var rowTouchBegin = -1
-    var upperLeftTouchBegin = true //Bool for upperleft or lower-right quadrant
+    var isLeftTouchBegin = true //Bool for upperleft or lower-right quadrant
+    
+    
+    
     // moving piece image that tracks mouse
     var movingPieceImage: UIImage? = nil
     var movingPieceX: CGFloat = -1
     var movingPieceY: CGFloat = -1
+    
+    
     
     
     override func draw(_ rect: CGRect) {
@@ -53,13 +58,14 @@ class BoardView: UIView {
         //TODO: fix touches to left and above board counting as on row/col zero due to integer casting
         colTouchBegin = Int( (fingerLocation.x - BoardAnchorX)/squareSize )
         rowTouchBegin = Int( (fingerLocation.y - BoardAnchorY)/squareSize )
-        upperLeftTouchBegin = (fingerLocation.x - BoardAnchorX).truncatingRemainder(dividingBy: squareSize) + (fingerLocation.y - BoardAnchorY ).truncatingRemainder(dividingBy: squareSize) < squareSize
+        isLeftTouchBegin = Int(2*(fingerLocation.x - BoardAnchorX)/squareSize) % 2 == 0
+        //isLeftTouchBegin = (fingerLocation.x - BoardAnchorX).truncatingRemainder(dividingBy: squareSize)<0.5*squareSize
 
         // start moving image of chess piece where touch begins
         movingPieceX = fingerLocation.x - squareSize/2
         movingPieceY = fingerLocation.y - squareSize/2
         
-        if let movingPiece = chessDelegate?.pieceAt(col: colTouchBegin, row: rowTouchBegin){
+        if let movingPiece = chessDelegate?.pieceAt(col: colTouchBegin, row: rowTouchBegin,isLeft: isLeftTouchBegin){
             movingPieceImage = UIImage(named: movingPiece.ImageName)
         }
         
@@ -81,11 +87,12 @@ class BoardView: UIView {
         let colTouchEnd: Int = Int( (fingerLocation.x - BoardAnchorX)/squareSize )
         let rowTouchEnd: Int = Int( (fingerLocation.y - BoardAnchorY)/squareSize )
         
-        chessDelegate?.movePiece(fromCol: colTouchBegin, fromRow: rowTouchBegin, toCol: colTouchEnd, toRow: rowTouchEnd)
+        chessDelegate?.movePiece(fromCol: colTouchBegin, fromRow: rowTouchBegin, isLeftBegin: isLeftTouchBegin, toCol: colTouchEnd, toRow: rowTouchEnd)
         
         movingPieceImage = nil
         colTouchBegin = -1
         rowTouchBegin = -1
+        isLeftTouchBegin = true
     }
     
     
@@ -107,8 +114,7 @@ class BoardView: UIView {
         for piece in pieces {
             
             // skip drawing piece if it is currently in motion (handled below)
-            // TODO: bug where clicking on a piece removes it
-            if colTouchBegin==piece.col && rowTouchBegin==piece.row{
+            if colTouchBegin==piece.col && rowTouchBegin==piece.row && isLeftTouchBegin==piece.isLeft{
                 continue
             }
             
