@@ -10,6 +10,13 @@ import Foundation
 struct ChessEngine {
     var pieces: Set<ChessPiece> = Set<ChessPiece>()
     var whitesTurn: Bool = true
+    var firstHalfTurn: Bool = true
+    
+    // Putting a half-piece into a square with two opposing half-pieces leads to `conflict' squares that must be tracked.
+    var conflict1Row: Int = -1
+    var conflict1Col: Int = -1
+    var conflict2Row: Int = -1
+    var conflict2Col: Int = -1
     
     mutating func movePiece(fromCol: Int, fromRow: Int, isLeftBegin: Bool, toCol: Int, toRow: Int){
         
@@ -41,9 +48,17 @@ struct ChessEngine {
                 if (false){
                     //
                 }
-                // if target square is occupied by two opposing pieces,
-                if (false){
-                    //
+                // if target square is occupied by two opposing pieces, record square as it will be important
+                if (targetPieceLeft.isWhite == targetPieceRight.isWhite){
+                    if firstHalfTurn{
+                        conflict1Col = toCol
+                        conflict1Row = toRow
+                    }
+                    if (!firstHalfTurn) {
+                        conflict2Col = toCol
+                        conflict2Row = toRow
+                    }
+                    print("waiting to be resolved")
                 }
                 
                 // if target square is occupied by two opposite pieces, replace the one of opposite colour
@@ -65,15 +80,26 @@ struct ChessEngine {
         }
         print("completed check of target square")
     
+        
+        
+        
         // Remove piece at start, add it at end TODO: Understand why we can't just change position
         pieces.remove(movingPiece)
         pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: isLeftBegin))
         // TODO: need to insert piece in left or right depending if space is already occupied
         
-        //TODO: only switch turn after two half-moves: this probably requires a second bool and two different moveFirstHalfPiece and moveSecondHalfPiece functions
-        // If we've made it here, hopefully we made a move
-        whitesTurn = !whitesTurn
+        // Resolve conflicts
+        // if one conflict: collapse
+        // if two conflicts: collapse in either order
+        // if both conflicts in same place: capture piece
         
+        // If we've made it here, hopefully we made a move
+        
+        firstHalfTurn = !firstHalfTurn
+        if firstHalfTurn {
+            whitesTurn = !whitesTurn
+        }
+                
     }
     
     
