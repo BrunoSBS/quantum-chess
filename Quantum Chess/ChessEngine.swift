@@ -12,6 +12,7 @@ struct ChessEngine {
     var whitesTurn: Bool = true
     var firstHalfTurn: Bool = true
     
+    var turnNumber: Int = 1
     // We record the destinations of both pieces, their colours and pieces in the respective target squares for the resolve full move function
     var toCol1: Int = -1
     var toCol2: Int = -1
@@ -27,8 +28,8 @@ struct ChessEngine {
     var newString: String = ""
     
     mutating func movePiece(fromCol: Int, fromRow: Int, isLeftBegin: Bool, toCol: Int, toRow: Int){
-        
-        
+        print("turn number: ",turnNumber)
+        //TODO: make moving piece ghost piece, have piece in initial spot become ghost piece immediately?
         // Check there is a piece at the place we started our touch
         guard let movingPiece = pieceAt(col: fromCol, row: fromRow, isLeft: isLeftBegin) else {
             return
@@ -58,47 +59,49 @@ struct ChessEngine {
         }
         
         
-        // Remove piece at start, add it at end TODO: Understand why we can't just change position
+        // Remove piece at start, add it at end
         pieces.remove(movingPiece)
         
         // If first half turn, move is done with ghost pieces to make clear move is provisional
         if firstHalfTurn{
+            // turn starting place to ghost piece
             pieces.insert(ChessPiece(col: fromCol, row: fromRow, ImageName: "ghost" + movingPiece.ImageName, isWhite: movingPiece.isWhite, isLeft: movingPiece.isLeft))
-            pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: "ghost" + movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: isLeftBegin))
+            
+            // insert ghost piece in target square, changing isLeft of piece if there is already half-piece in its orientation
+            //TODO: if target square has two pieces of friendly colour (and possibly in other scenarios) we should cancel move early
+            if targetPieces1.contains(where: {$0.isLeft == movingPiece.isLeft}){
+                pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: "ghost" + movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: !isLeftBegin))
+                print("changed first moving piece's isLeft")
+            }
+            else{
+                pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: "ghost" + movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: isLeftBegin))
+            }
             toCol1 = toCol
             toRow1 = toRow
         }
         
-        // If second half turn, make move and clean up
+        // If second half turn, decide whether whole move is legal
         if !firstHalfTurn{
 
             if resolveFullMove(toCol1: toCol1, toCol2: toCol, toRow1: toRow1, toRow2: toRow, whitesTurn: whitesTurn, targetPieces1: targetPieces1, targetPieces2: targetPieces2){
                 
                 // move moving pieces to final destinations and clean up
                 completeMove(movingPiece: movingPiece, toCol1: toCol1, toRow1: toRow1, toCol2: toCol, toRow2: toRow)
-                
+
                 // switch whose turn it is
                 whitesTurn = !whitesTurn
-                      
-                
+                turnNumber += 1
             }
             else{
                 // move moving pieces back to original places and clean up
                 cancelMove(movingPiece: movingPiece, toCol1: toCol1, toRow1: toRow1, fromCol2: fromCol, fromRow2: fromRow)
-                
-                
             }
-            
-            
         }
         
         
         // Switch half-move
         firstHalfTurn = !firstHalfTurn
 
-
-        // TODO: need to insert piece in left or right depending if space is already occupied
-        
         // TODO: instead of removing pieces, they should be moved to `dead' area outside board.
           
     }
@@ -108,7 +111,7 @@ struct ChessEngine {
 
         //if two half-pieces move to same square...
         if (toCol1 == toCol2 && toRow1 == toRow2){
-            //...and  target pieces are all of opposite colour, delete all target pieces and make move.
+            //if two half-pieces move to same square and target pieces are all of opposite colour, delete all target pieces and make move.
             if targetPieces1.allSatisfy({$0.isWhite != whitesTurn}){
                 print("Capture")
                 for piece in targetPieces1{
@@ -116,7 +119,7 @@ struct ChessEngine {
                 }
                 
             }
-            // if two half-pieces move to same square, but at least one target piece is the opposite colour, cancel move.
+            // if two half-pieces move to same square, but at least one target piece is the same colour, cancel move.
             else{
                 print("Cancel")
                 // cancels move of first piece
@@ -128,23 +131,20 @@ struct ChessEngine {
                 //cancels move of second piece
                 return false
             }
-            
-            
-            
         }
-
-        
+   
         // if two half-pieces move to different squares, they are resolved independently
+        // both must resolve true to return true
         else{
             print("Two separate squares")
             // First 1 and then 2, so turn order currently matters
             //TODO: Make order of resolution player choice
-            resolveHalfMove(col: toCol1, row: toRow1, whitesTurn: whitesTurn, targetPieces: targetPieces1)
-            resolveHalfMove(col: toCol2, row: toRow2, whitesTurn: whitesTurn, targetPieces: targetPieces2)
+            //resolveHalfMove(col: toCol1, row: toRow1, whitesTurn: whitesTurn, targetPieces: targetPieces1)
+            //resolveHalfMove(col: toCol2, row: toRow2, whitesTurn: whitesTurn, targetPieces: targetPieces2)
             
             // Currently, always cancel move
             // TODO: correct checks for legality
-            return false
+            return resolveHalfMove(col: toCol1, row: toRow1, whitesTurn: whitesTurn, targetPieces: targetPieces1) && resolveHalfMove(col: toCol2, row: toRow2, whitesTurn: whitesTurn, targetPieces: targetPieces2)
         }
         
         return true
@@ -152,24 +152,47 @@ struct ChessEngine {
         
     }
     
-    mutating func resolveHalfMove(col: Int, row: Int, whitesTurn: Bool, targetPieces: Set<ChessPiece>){
-        for piece in targetPieces{
-            print(piece.ImageName)
+    mutating func resolveHalfMove(col: Int, row: Int, whitesTurn: Bool, targetPieces: Set<ChessPiece>)->Bool{
+        // if there is one or zero pieces in the square being moved to, then the half-move is legal
+        if (targetPieces.count <= 1){
+            return true
         }
-        
+        // if there are two half-pieces present, currently we always cancel move
+        return false
+        //TODO: if two half-pieces of different colour, capture the opposing colour one
+        //TODO: if two half-pieces of same, opposing colour, resolve collapse
     }
-    
+    //.rotate(radians: .pi).
     
     mutating func completeMove(movingPiece: ChessPiece, toCol1: Int, toRow1: Int,toCol2: Int, toRow2: Int){
         
         // move second half-piece into square
-        pieces.insert(ChessPiece(col: toCol2, row: toRow2, ImageName: movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: movingPiece.isLeft))
+        if targetPieces1.contains(where: {$0.isLeft == movingPiece.isLeft}){
+            // again, rotate if there is existing piece in same isLeft slot
+            pieces.insert(ChessPiece(col: toCol2, row: toRow2, ImageName: movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: !movingPiece.isLeft))
+            print("changed second moving piece's isLeft")
+        }
+        else{
+            pieces.insert(ChessPiece(col: toCol2, row: toRow2, ImageName: movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: movingPiece.isLeft))
+        }
+        
+        
 
         // replace ghost piece in target square with normal half-piece
         for piece in allPiecesAt(col: toCol1, row: toRow1){
             if (piece.ImageName.prefix(5)=="ghost"){
+                // name of new piece needs us to remove 'ghost'
                 let newString = piece.ImageName.replacingOccurrences(of: "ghost", with: "", options: .regularExpression, range: nil)
-                pieces.insert(ChessPiece(col: toCol1, row: toRow1, ImageName: newString, isWhite: piece.isWhite, isLeft: piece.isLeft))
+                
+                if targetPieces2.contains(where: {$0.isLeft == piece.isLeft}){
+                    pieces.insert(ChessPiece(col: toCol1, row: toRow1, ImageName: newString, isWhite: piece.isWhite, isLeft: !piece.isLeft))
+
+                }
+                else{
+                    pieces.insert(ChessPiece(col: toCol1, row: toRow1, ImageName: newString, isWhite: piece.isWhite, isLeft: piece.isLeft))
+                    
+                }
+                
             }
         }
             
