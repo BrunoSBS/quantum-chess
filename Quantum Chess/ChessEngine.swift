@@ -48,7 +48,9 @@ struct ChessEngine {
             targetPieces1.removeAll()
             for piece in allPiecesAt(col: toCol, row: toRow){
                 targetPieces1.insert(piece)
+                print(piece.ImageName,piece.isWhite,piece.isLeft)
             }
+            
             
         }
         if !firstHalfTurn{
@@ -111,8 +113,12 @@ struct ChessEngine {
 
         //if two half-pieces move to same square...
         if (toCol1 == toCol2 && toRow1 == toRow2){
+            
+            if targetPieces1.isEmpty{
+                print("Empty target square")
+            }
             //if two half-pieces move to same square and target pieces are all of opposite colour, delete all target pieces and make move.
-            if targetPieces1.allSatisfy({$0.isWhite != whitesTurn}){
+            else if targetPieces1.allSatisfy({$0.isWhite != whitesTurn}){
                 print("Capture")
                 for piece in targetPieces1{
                     pieces.remove(piece)
@@ -167,7 +173,7 @@ struct ChessEngine {
     mutating func completeMove(movingPiece: ChessPiece, toCol1: Int, toRow1: Int,toCol2: Int, toRow2: Int){
         
         // move second half-piece into square
-        if targetPieces1.contains(where: {$0.isLeft == movingPiece.isLeft}){
+        if targetPieces2.contains(where: {$0.isLeft == movingPiece.isLeft}){
             // again, rotate if there is existing piece in same isLeft slot
             pieces.insert(ChessPiece(col: toCol2, row: toRow2, ImageName: movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: !movingPiece.isLeft))
             print("changed second moving piece's isLeft")
@@ -184,7 +190,7 @@ struct ChessEngine {
                 // name of new piece needs us to remove 'ghost'
                 let newString = piece.ImageName.replacingOccurrences(of: "ghost", with: "", options: .regularExpression, range: nil)
                 
-                if targetPieces2.contains(where: {$0.isLeft == piece.isLeft}){
+                if targetPieces1.contains(where: {$0.isLeft == piece.isLeft}){
                     pieces.insert(ChessPiece(col: toCol1, row: toRow1, ImageName: newString, isWhite: piece.isWhite, isLeft: !piece.isLeft))
 
                 }
