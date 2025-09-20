@@ -7,6 +7,29 @@
 
 import UIKit
 
+extension UIImage {
+    func rotate(radians: CGFloat) -> UIImage {
+        let rotatedSize = CGRect(origin: .zero, size: size)
+            .applying(CGAffineTransform(rotationAngle: CGFloat(radians)))
+            .integral.size
+        UIGraphicsBeginImageContext(rotatedSize)
+        if let context = UIGraphicsGetCurrentContext() {
+            let origin = CGPoint(x: rotatedSize.width / 2.0,
+                                 y: rotatedSize.height / 2.0)
+            context.translateBy(x: origin.x, y: origin.y)
+            context.rotate(by: radians)
+            draw(in: CGRect(x: -origin.y, y: -origin.x,
+                            width: size.width, height: size.height))
+            let rotatedImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+
+            return rotatedImage ?? self
+        }
+
+        return self
+    }
+}
+
 class BoardView: UIView {
 
     // Board variables
@@ -19,6 +42,8 @@ class BoardView: UIView {
     
     // Pieces
     var pieces = Set<ChessPiece>()
+    // placeholder for piece image?
+    //var pieceImage: UIImage? = nil
     
     // chessDelegate protocol that talks to chessEngine through/in (?) ViewController
     var chessDelegate: ChessDelegate?
@@ -67,6 +92,14 @@ class BoardView: UIView {
         
         if let movingPiece = chessDelegate?.pieceAt(col: colTouchBegin, row: rowTouchBegin,isLeft: isLeftTouchBegin){
             movingPieceImage = UIImage(named: movingPiece.ImageName)
+            if ((movingPiece.ImageName.contains("1") && movingPiece.isLeft) || (movingPiece.ImageName.contains("2") && !movingPiece.isLeft)){
+                movingPieceImage = UIImage(named: movingPiece.ImageName)
+                //movingPieceImage?.draw(in: CGRect(x: movingPieceX, y: movingPieceY, width: squareSize, height: squareSize))
+            }
+            else{
+                movingPieceImage = UIImage(named: movingPiece.ImageName)?.rotate(radians: .pi)
+                //movingPieceImage?.rotate(radians: .pi).draw(in: CGRect(x: movingPieceX, y: movingPieceY, width: squareSize, height: squareSize))
+            }
         }
         
     }
@@ -117,12 +150,24 @@ class BoardView: UIView {
             if colTouchBegin==piece.col && rowTouchBegin==piece.row && isLeftTouchBegin==piece.isLeft{
                 continue
             }
-            
+            // rotate pieces whose assigned box of isLeft does not match their image file
             let pieceImage = UIImage(named: piece.ImageName)
-            pieceImage?.draw(in: CGRect(x: BoardAnchorX + CGFloat(piece.col) * squareSize, y: BoardAnchorY + CGFloat(piece.row) * squareSize, width: squareSize, height:squareSize))
+            if ((piece.ImageName.contains("1") && piece.isLeft) || (piece.ImageName.contains("2") && !piece.isLeft)){
+                //let pieceImage = UIImage(named: piece.ImageName)
+                pieceImage?.draw(in: CGRect(x: BoardAnchorX + CGFloat(piece.col) * squareSize, y: BoardAnchorY + CGFloat(piece.row) * squareSize, width: squareSize, height:squareSize))
+            }
+
+           else{
+               // let pieceImage = UIImage(named: piece.ImageName)?.rotate(radians: .pi)
+               pieceImage?.rotate(radians: .pi).draw(in: CGRect(x: BoardAnchorX + CGFloat(piece.col) * squareSize, y: BoardAnchorY + CGFloat(piece.row) * squareSize, width: squareSize, height:squareSize))
+            }
+            
+            //pieceImage?.draw(in: CGRect(x: BoardAnchorX + CGFloat(piece.col) * squareSize, y: BoardAnchorY + CGFloat(piece.row) * squareSize, width: squareSize, height:squareSize))
         }
         
         // draw moving piece
+        
+        
         movingPieceImage?.draw(in: CGRect(x: movingPieceX, y: movingPieceY, width: squareSize, height: squareSize))
     }
     
