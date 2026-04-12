@@ -14,6 +14,9 @@ struct ChessPiece: Hashable {
     let ImageName: String
     let isWhite: Bool // true: White, false: Black
     let isLeft: Bool // true: occupies left side of square, false: on right side
+    //let isArriving: Bool // true: is tentative destination square, false: default
+    //let isLeaving: Bool // true: is tentative departure square, false: default
+    
     //let identity: String // unchanging identity associated to piece
     //?let isGhost: Bool // state marking whether piece is greyed or not?
 }

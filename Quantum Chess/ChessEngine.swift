@@ -71,13 +71,17 @@ struct ChessEngine {
             
             // insert ghost piece in target square, changing isLeft of piece if there is already half-piece in its orientation
             //TODO: if target square has two pieces of friendly colour (and possibly in other scenarios) we should cancel move early
-            if targetPieces1.contains(where: {$0.isLeft == movingPiece.isLeft}){
-                pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: "ghost" + movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: !isLeftBegin))
-                print("changed first moving piece's isLeft")
-            }
-            else{
-                pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: "ghost" + movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: isLeftBegin))
-            }
+//            if targetPieces1.contains(where: {$0.isLeft == movingPiece.isLeft}){
+//                pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: "ghost" + movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: !isLeftBegin))
+//                print("changed first moving piece's isLeft")
+//            }
+//            else{
+//                pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: "ghost" + movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: isLeftBegin))
+//            }
+            
+            // insert ghost piece in target square, not changing isLeft (we will visualise it differently anyway)
+            pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: "ghost" + movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: isLeftBegin))
+            
             toCol1 = toCol
             toRow1 = toRow
         }
@@ -108,7 +112,7 @@ struct ChessEngine {
           
     }
     
-    
+    // Function that checks legality at end of second half-move in a turn, returning false if second half-move is to be cancelled
     mutating func resolveFullMove(toCol1: Int, toCol2: Int, toRow1: Int, toRow2: Int, whitesTurn: Bool, targetPieces1: Set<ChessPiece>, targetPieces2: Set<ChessPiece>)->Bool{
 
         //if two half-pieces move to same square...
@@ -123,8 +127,8 @@ struct ChessEngine {
                 for piece in targetPieces1{
                     pieces.remove(piece)
                 }
-                
             }
+            
             // if two half-pieces move to same square, but at least one target piece is the same colour, cancel move.
             else{
                 print("Cancel")
@@ -158,6 +162,8 @@ struct ChessEngine {
         
     }
     
+    // Function that checks legality of move of one half-piece on its own to a target square
+    // i.e. it checks the first half-move, and if two half-pieces move to different squares, each will be resolved here too
     mutating func resolveHalfMove(col: Int, row: Int, whitesTurn: Bool, targetPieces: Set<ChessPiece>)->Bool{
         // if there is one or zero pieces in the square being moved to, then the half-move is legal
         if (targetPieces.count <= 1){
@@ -170,18 +176,12 @@ struct ChessEngine {
     }
     //.rotate(radians: .pi).
     
+    // Function that
     mutating func completeMove(movingPiece: ChessPiece, toCol1: Int, toRow1: Int,toCol2: Int, toRow2: Int){
-        
+
+
         // move second half-piece into square
-        if targetPieces2.contains(where: {$0.isLeft == movingPiece.isLeft}){
-            // again, rotate if there is existing piece in same isLeft slot
-            pieces.insert(ChessPiece(col: toCol2, row: toRow2, ImageName: movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: !movingPiece.isLeft))
-            print("changed second moving piece's isLeft")
-        }
-        else{
-            pieces.insert(ChessPiece(col: toCol2, row: toRow2, ImageName: movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: movingPiece.isLeft))
-        }
-        
+        pieces.insert(ChessPiece(col: toCol2, row: toRow2, ImageName: movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: movingPiece.isLeft))
         
 
         // replace ghost piece in target square with normal half-piece
@@ -190,14 +190,8 @@ struct ChessEngine {
                 // name of new piece needs us to remove 'ghost'
                 let newString = piece.ImageName.replacingOccurrences(of: "ghost", with: "", options: .regularExpression, range: nil)
                 
-                if targetPieces1.contains(where: {$0.isLeft == piece.isLeft}){
-                    pieces.insert(ChessPiece(col: toCol1, row: toRow1, ImageName: newString, isWhite: piece.isWhite, isLeft: !piece.isLeft))
-
-                }
-                else{
-                    pieces.insert(ChessPiece(col: toCol1, row: toRow1, ImageName: newString, isWhite: piece.isWhite, isLeft: piece.isLeft))
-                    
-                }
+                pieces.insert(ChessPiece(col: toCol1, row: toRow1, ImageName: newString, isWhite: piece.isWhite, isLeft: piece.isLeft))
+                
                 
             }
         }
@@ -208,6 +202,27 @@ struct ChessEngine {
                 pieces.remove(piece)
             }
         }
+        
+        //TODO: Check two half-pieces per square?
+        if (allPiecesAt(col: toCol1, row: toRow1).count > 2){
+            print("ERROR: more than two half-pieces at square")
+        }
+        
+        if (allPiecesAt(col: toCol2, row: toRow2).count > 2){
+            print("ERROR: more than two half-pieces at square")
+        }
+        
+        // make sure all pieces at (toCol1,toRow1) have different isLeft
+        if (allPiecesAt(col: toCol1, row: toRow1).count == 2){
+            separateIsLeft(piece1: allPiecesAt(col: toCol1, row: toRow1)[0], piece2: allPiecesAt(col: toCol1, row: toRow1)[1])
+        }
+        
+        // make sure all pieces at (toCol2,toRow2) have different isLeft
+        if (allPiecesAt(col: toCol2, row: toRow2).count == 2){
+            separateIsLeft(piece1: allPiecesAt(col: toCol2, row: toRow2)[0], piece2: allPiecesAt(col: toCol2, row: toRow2)[1])
+        }
+        
+        
     }
     
     mutating func cancelMove(movingPiece: ChessPiece, toCol1: Int, toRow1: Int, fromCol2: Int, fromRow2: Int){
@@ -231,6 +246,13 @@ struct ChessEngine {
         }
     }
     
+    // Function that takes two half pieces at square and if they have same isLeft it is switched
+    mutating func separateIsLeft(piece1: ChessPiece, piece2: ChessPiece){
+        if (piece1.isLeft == piece2.isLeft){
+            pieces.insert(ChessPiece(col: piece2.col, row: piece2.row, ImageName: piece2.ImageName, isWhite:piece2.isWhite,isLeft: !piece2.isLeft))
+            pieces.remove(piece2)
+        }
+    }
     
     func canMovePiece(fromCol: Int, fromRow: Int, toCol: Int, toRow: Int, pieceIsWhite: Bool, pieceImageName: String)->Bool{
         
@@ -262,11 +284,12 @@ struct ChessEngine {
         return nil
     }
     
-    func allPiecesAt(col: Int, row: Int) -> Set<ChessPiece>{
-        var pieceList: Set<ChessPiece> = Set<ChessPiece>()
+    // Returns array of pieces at given column and row
+    func allPiecesAt(col: Int, row: Int) -> Array<ChessPiece>{
+        var pieceList: Array<ChessPiece> = Array<ChessPiece>()
         for piece in pieces {
             if col == piece.col && row == piece.row {
-                pieceList.insert(piece)
+                pieceList.append(piece)
             }
         }
         return pieceList

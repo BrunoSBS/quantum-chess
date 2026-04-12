@@ -150,6 +150,7 @@ class BoardView: UIView {
             if colTouchBegin==piece.col && rowTouchBegin==piece.row && isLeftTouchBegin==piece.isLeft{
                 continue
             }
+            
             // rotate pieces whose assigned box of isLeft does not match their image file
             let pieceImage = UIImage(named: piece.ImageName)
             if ((piece.ImageName.contains("1") && piece.isLeft) || (piece.ImageName.contains("2") && !piece.isLeft)){
