@@ -151,15 +151,24 @@ class BoardView: UIView {
                 continue
             }
             
+            
+            
+            
+            var pieceImageName = piece.ImageName
+                
+            if (piece.isGhost){
+                pieceImageName = "ghost"+pieceImageName
+            }
+            
+            let pieceImage = UIImage(named: pieceImageName)
+            
             // rotate pieces whose assigned box of isLeft does not match their image file
-            let pieceImage = UIImage(named: piece.ImageName)
+            // -> draw normally
             if ((piece.ImageName.contains("1") && piece.isLeft) || (piece.ImageName.contains("2") && !piece.isLeft)){
-                //let pieceImage = UIImage(named: piece.ImageName)
                 pieceImage?.draw(in: CGRect(x: BoardAnchorX + CGFloat(piece.col) * squareSize, y: BoardAnchorY + CGFloat(piece.row) * squareSize, width: squareSize, height:squareSize))
             }
-
-           else{
-               // let pieceImage = UIImage(named: piece.ImageName)?.rotate(radians: .pi)
+            // -> draw rotated
+            else{
                pieceImage?.rotate(radians: .pi).draw(in: CGRect(x: BoardAnchorX + CGFloat(piece.col) * squareSize, y: BoardAnchorY + CGFloat(piece.row) * squareSize, width: squareSize, height:squareSize))
             }
             
