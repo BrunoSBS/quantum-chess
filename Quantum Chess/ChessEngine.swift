@@ -24,8 +24,8 @@ struct ChessEngine {
     var targetPieces2: Set<ChessPiece> = Set<ChessPiece>()
     
     // the old position of the first half piece moved is also stored
-    var ghostPiece: ChessPiece = ChessPiece(col: -1,row: -1, ImageName: "",isWhite: true, isLeft: true)
-    var newString: String = ""
+    //var ghostPiece: ChessPiece = ChessPiece(col: -1,row: -1, ImageName: "",isWhite: true, isLeft: true,isGhost: true)
+    //var newString: String = ""
     
     mutating func movePiece(fromCol: Int, fromRow: Int, isLeftBegin: Bool, toCol: Int, toRow: Int){
         print("turn number: ",turnNumber)
@@ -37,7 +37,7 @@ struct ChessEngine {
         
         
         // Check that move is legal in terms of starting and ending on different squares - is this where we put legal moves in also?
-        if !canMovePiece(fromCol: fromCol, fromRow: fromRow, toCol: fromCol, toRow: toRow,pieceIsWhite: movingPiece.isWhite,pieceImageName: movingPiece.ImageName){
+        if !canMovePiece(fromCol: fromCol, fromRow: fromRow, toCol: fromCol, toRow: toRow,pieceIsWhite: movingPiece.isWhite,pieceIsGhost: movingPiece.isGhost){
             return
         }
         
@@ -67,7 +67,7 @@ struct ChessEngine {
         // If first half turn, move is done with ghost pieces to make clear move is provisional
         if firstHalfTurn{
             // turn starting place to ghost piece
-            pieces.insert(ChessPiece(col: fromCol, row: fromRow, ImageName: "ghost" + movingPiece.ImageName, isWhite: movingPiece.isWhite, isLeft: movingPiece.isLeft))
+            pieces.insert(ChessPiece(col: fromCol, row: fromRow, ImageName: movingPiece.ImageName, isWhite: movingPiece.isWhite, isLeft: movingPiece.isLeft,isGhost: true))
             
             // insert ghost piece in target square, changing isLeft of piece if there is already half-piece in its orientation
             //TODO: if target square has two pieces of friendly colour (and possibly in other scenarios) we should cancel move early
@@ -80,8 +80,9 @@ struct ChessEngine {
 //            }
             
             // insert ghost piece in target square, not changing isLeft (we will visualise it differently anyway)
-            pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: "ghost" + movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: isLeftBegin))
+            //pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: "ghost" + movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: isLeftBegin))
             
+            pieces.insert(ChessPiece(col: toCol, row: toRow, ImageName: movingPiece.ImageName, isWhite: movingPiece.isWhite, isLeft: isLeftBegin,isGhost: true))
             toCol1 = toCol
             toRow1 = toRow
         }
@@ -176,29 +177,35 @@ struct ChessEngine {
     }
     //.rotate(radians: .pi).
     
-    // Function that
+    // Function that cleans up at end of move
     mutating func completeMove(movingPiece: ChessPiece, toCol1: Int, toRow1: Int,toCol2: Int, toRow2: Int){
 
 
         // move second half-piece into square
-        pieces.insert(ChessPiece(col: toCol2, row: toRow2, ImageName: movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: movingPiece.isLeft))
+        pieces.insert(ChessPiece(col: toCol2, row: toRow2, ImageName: movingPiece.ImageName,isWhite: movingPiece.isWhite, isLeft: movingPiece.isLeft, isGhost: false))
         
 
         // replace ghost piece in target square with normal half-piece
         for piece in allPiecesAt(col: toCol1, row: toRow1){
-            if (piece.ImageName.prefix(5)=="ghost"){
-                // name of new piece needs us to remove 'ghost'
-                let newString = piece.ImageName.replacingOccurrences(of: "ghost", with: "", options: .regularExpression, range: nil)
-                
-                pieces.insert(ChessPiece(col: toCol1, row: toRow1, ImageName: newString, isWhite: piece.isWhite, isLeft: piece.isLeft))
-                
-                
+//            if (piece.ImageName.prefix(5)=="ghost"){
+//                // name of new piece needs us to remove 'ghost'
+//                let newString = piece.ImageName.replacingOccurrences(of: "ghost", with: "", options: .regularExpression, range: nil)
+//
+//                pieces.insert(ChessPiece(col: toCol1, row: toRow1, ImageName: newString, isWhite: piece.isWhite, isLeft: piece.isLeft, isGhost: false))
+//
+//
+//            }
+            if piece.isGhost{
+                pieces.insert(ChessPiece(col: toCol1, row: toRow1, ImageName: piece.ImageName, isWhite: piece.isWhite, isLeft: piece.isLeft, isGhost: false))
             }
         }
             
         // remove all ghost pieces remaining
         for piece in pieces{
-            if (piece.ImageName.prefix(5)=="ghost"){
+//            if (piece.ImageName.prefix(5)=="ghost"){
+//                pieces.remove(piece)
+//            }
+            if piece.isGhost{
                 pieces.remove(piece)
             }
         }
@@ -229,32 +236,42 @@ struct ChessEngine {
         
         // remove ghost piece at target square
         for piece in allPiecesAt(col: toCol1, row: toRow1){
-            if (piece.ImageName.prefix(5)=="ghost"){
+//            if (piece.ImageName.prefix(5)=="ghost"){
+//                pieces.remove(piece)
+//            }
+            if piece.isGhost{
                 pieces.remove(piece)
             }
         }
         
         // replace movingpiece at start square
-        pieces.insert(ChessPiece(col: fromCol2, row: fromRow2, ImageName: movingPiece.ImageName, isWhite: movingPiece.isWhite, isLeft: movingPiece.isLeft))
+        pieces.insert(ChessPiece(col: fromCol2, row: fromRow2, ImageName: movingPiece.ImageName, isWhite: movingPiece.isWhite, isLeft: movingPiece.isLeft,isGhost: false))
         
         // replace all ghost pieces remaining with normal half-pieces
         for piece in pieces{
-            if (piece.ImageName.prefix(5)=="ghost"){
+//            if (piece.ImageName.prefix(5)=="ghost"){
+//                let newString = piece.ImageName.replacingOccurrences(of: "ghost", with: "", options: .regularExpression, range: nil)
+//
+//            }
+//
+//
+            if (piece.isGhost){
                 let newString = piece.ImageName.replacingOccurrences(of: "ghost", with: "", options: .regularExpression, range: nil)
-                pieces.insert(ChessPiece(col: piece.col, row: piece.row, ImageName: newString, isWhite: piece.isWhite, isLeft: piece.isLeft))
+                pieces.insert(ChessPiece(col: piece.col, row: piece.row, ImageName: newString, isWhite: piece.isWhite, isLeft: piece.isLeft,isGhost: false))
             }
+            
         }
     }
     
     // Function that takes two half pieces at square and if they have same isLeft it is switched
     mutating func separateIsLeft(piece1: ChessPiece, piece2: ChessPiece){
         if (piece1.isLeft == piece2.isLeft){
-            pieces.insert(ChessPiece(col: piece2.col, row: piece2.row, ImageName: piece2.ImageName, isWhite:piece2.isWhite,isLeft: !piece2.isLeft))
+            pieces.insert(ChessPiece(col: piece2.col, row: piece2.row, ImageName: piece2.ImageName, isWhite:piece2.isWhite,isLeft: !piece2.isLeft, isGhost: piece2.isGhost))
             pieces.remove(piece2)
         }
     }
     
-    func canMovePiece(fromCol: Int, fromRow: Int, toCol: Int, toRow: Int, pieceIsWhite: Bool, pieceImageName: String)->Bool{
+    func canMovePiece(fromCol: Int, fromRow: Int, toCol: Int, toRow: Int, pieceIsWhite: Bool,pieceIsGhost: Bool)->Bool{
         
         // Check if start and end position are same
         if (fromCol==toCol && fromRow == toRow){
@@ -267,7 +284,10 @@ struct ChessEngine {
         }
         
         // Check that piece is not ghost piece
-        if (pieceImageName.prefix(5)=="ghost"){
+//        if (pieceImageName.prefix(5)=="ghost"){
+//            return false
+//        }
+        if pieceIsGhost{
             return false
         }
         return true
@@ -300,44 +320,44 @@ struct ChessEngine {
         
         whitesTurn = true
 
-        pieces.insert(ChessPiece(col: 0, row: 0, ImageName: "Half1Rook-Black",isWhite: false, isLeft: true))
-        pieces.insert(ChessPiece(col: 0, row: 0, ImageName: "Half2Rook-Black",isWhite: false, isLeft: false))
-        pieces.insert(ChessPiece(col: 1, row: 0, ImageName: "Half1Knight-Black",isWhite: false, isLeft: true))
-        pieces.insert(ChessPiece(col: 1, row: 0, ImageName: "Half2Knight-Black",isWhite: false, isLeft: false))
-        pieces.insert(ChessPiece(col: 2, row: 0, ImageName: "Half1Bishop-Black",isWhite: false, isLeft: true))
-        pieces.insert(ChessPiece(col: 2, row: 0, ImageName: "Half2Bishop-Black",isWhite: false, isLeft: false))
-        pieces.insert(ChessPiece(col: 3, row: 0, ImageName: "Half1Queen-Black",isWhite: false, isLeft: true))
-        pieces.insert(ChessPiece(col: 3, row: 0, ImageName: "Half2Queen-Black",isWhite: false, isLeft: false))
-        pieces.insert(ChessPiece(col: 4, row: 0, ImageName: "Half1King-Black",isWhite: false, isLeft: true))
-        pieces.insert(ChessPiece(col: 4, row: 0, ImageName: "Half2King-Black",isWhite: false, isLeft: false))
-        pieces.insert(ChessPiece(col: 5, row: 0, ImageName: "Half1Bishop-Black",isWhite: false, isLeft: true))
-        pieces.insert(ChessPiece(col: 5, row: 0, ImageName: "Half2Bishop-Black",isWhite: false, isLeft: false))
-        pieces.insert(ChessPiece(col: 6, row: 0, ImageName: "Half1Knight-Black",isWhite: false, isLeft: true))
-        pieces.insert(ChessPiece(col: 6, row: 0, ImageName: "Half2Knight-Black",isWhite: false, isLeft: false))
-        pieces.insert(ChessPiece(col: 7, row: 0, ImageName: "Half1Rook-Black",isWhite: false, isLeft: true))
-        pieces.insert(ChessPiece(col: 7, row: 0, ImageName: "Half2Rook-Black",isWhite: false, isLeft: false))
-        pieces.insert(ChessPiece(col: 0, row: 7, ImageName: "Half1Rook-White",isWhite: true, isLeft: true))
-        pieces.insert(ChessPiece(col: 0, row: 7, ImageName: "Half2Rook-White",isWhite: true, isLeft: false))
-        pieces.insert(ChessPiece(col: 1, row: 7, ImageName: "Half1Knight-White",isWhite: true, isLeft: true))
-        pieces.insert(ChessPiece(col: 1, row: 7, ImageName: "Half2Knight-White",isWhite: true, isLeft: false))
-        pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Half1Bishop-White",isWhite: true, isLeft: true))
-        pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Half2Bishop-White",isWhite: true, isLeft: false))
-        pieces.insert(ChessPiece(col: 3, row: 7, ImageName: "Half1Queen-White",isWhite: true, isLeft: true))
-        pieces.insert(ChessPiece(col: 3, row: 7, ImageName: "Half2Queen-White",isWhite: true, isLeft: false))
-        pieces.insert(ChessPiece(col: 4, row: 7, ImageName: "Half1King-White",isWhite: true, isLeft: true))
-        pieces.insert(ChessPiece(col: 4, row: 7, ImageName: "Half2King-White",isWhite: true, isLeft: false))
-        pieces.insert(ChessPiece(col: 5, row: 7, ImageName: "Half1Bishop-White",isWhite: true, isLeft: true))
-        pieces.insert(ChessPiece(col: 5, row: 7, ImageName: "Half2Bishop-White",isWhite: true, isLeft: false))
-        pieces.insert(ChessPiece(col: 6, row: 7, ImageName: "Half1Knight-White",isWhite: true, isLeft: true))
-        pieces.insert(ChessPiece(col: 6, row: 7, ImageName: "Half2Knight-White",isWhite: true, isLeft: false))
-        pieces.insert(ChessPiece(col: 7, row: 7, ImageName: "Half1Rook-White",isWhite: true, isLeft: true))
-        pieces.insert(ChessPiece(col: 7, row: 7, ImageName: "Half2Rook-White",isWhite: true, isLeft: false))
+        pieces.insert(ChessPiece(col: 0, row: 0, ImageName: "Half1Rook-Black",isWhite: false, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 0, row: 0, ImageName: "Half2Rook-Black",isWhite: false, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 1, row: 0, ImageName: "Half1Knight-Black",isWhite: false, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 1, row: 0, ImageName: "Half2Knight-Black",isWhite: false, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 2, row: 0, ImageName: "Half1Bishop-Black",isWhite: false, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 2, row: 0, ImageName: "Half2Bishop-Black",isWhite: false, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 3, row: 0, ImageName: "Half1Queen-Black",isWhite: false, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 3, row: 0, ImageName: "Half2Queen-Black",isWhite: false, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 4, row: 0, ImageName: "Half1King-Black",isWhite: false, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 4, row: 0, ImageName: "Half2King-Black",isWhite: false, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 5, row: 0, ImageName: "Half1Bishop-Black",isWhite: false, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 5, row: 0, ImageName: "Half2Bishop-Black",isWhite: false, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 6, row: 0, ImageName: "Half1Knight-Black",isWhite: false, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 6, row: 0, ImageName: "Half2Knight-Black",isWhite: false, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 7, row: 0, ImageName: "Half1Rook-Black",isWhite: false, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 7, row: 0, ImageName: "Half2Rook-Black",isWhite: false, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 0, row: 7, ImageName: "Half1Rook-White",isWhite: true, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 0, row: 7, ImageName: "Half2Rook-White",isWhite: true, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 1, row: 7, ImageName: "Half1Knight-White",isWhite: true, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 1, row: 7, ImageName: "Half2Knight-White",isWhite: true, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Half1Bishop-White",isWhite: true, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 2, row: 7, ImageName: "Half2Bishop-White",isWhite: true, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 3, row: 7, ImageName: "Half1Queen-White",isWhite: true, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 3, row: 7, ImageName: "Half2Queen-White",isWhite: true, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 4, row: 7, ImageName: "Half1King-White",isWhite: true, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 4, row: 7, ImageName: "Half2King-White",isWhite: true, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 5, row: 7, ImageName: "Half1Bishop-White",isWhite: true, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 5, row: 7, ImageName: "Half2Bishop-White",isWhite: true, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 6, row: 7, ImageName: "Half1Knight-White",isWhite: true, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 6, row: 7, ImageName: "Half2Knight-White",isWhite: true, isLeft: false, isGhost: false))
+        pieces.insert(ChessPiece(col: 7, row: 7, ImageName: "Half1Rook-White",isWhite: true, isLeft: true, isGhost: false))
+        pieces.insert(ChessPiece(col: 7, row: 7, ImageName: "Half2Rook-White",isWhite: true, isLeft: false, isGhost: false))
         
         for i in 0..<8{
-            pieces.insert(ChessPiece(col: i, row: 1, ImageName: "Half1Pawn-Black",isWhite: false, isLeft: true))
-            pieces.insert(ChessPiece(col: i, row: 1, ImageName: "Half2Pawn-Black",isWhite: false, isLeft: false))
-            pieces.insert(ChessPiece(col: i, row: 6, ImageName: "Half1Pawn-White",isWhite: true, isLeft: true))
-            pieces.insert(ChessPiece(col: i, row: 6, ImageName: "Half2Pawn-White",isWhite: true, isLeft: false))
+            pieces.insert(ChessPiece(col: i, row: 1, ImageName: "Half1Pawn-Black",isWhite: false, isLeft: true, isGhost: false))
+            pieces.insert(ChessPiece(col: i, row: 1, ImageName: "Half2Pawn-Black",isWhite: false, isLeft: false, isGhost: false))
+            pieces.insert(ChessPiece(col: i, row: 6, ImageName: "Half1Pawn-White",isWhite: true, isLeft: true, isGhost: false))
+            pieces.insert(ChessPiece(col: i, row: 6, ImageName: "Half2Pawn-White",isWhite: true, isLeft: false, isGhost: false))
         }
         
     }
