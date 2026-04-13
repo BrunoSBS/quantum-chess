@@ -156,18 +156,28 @@ class BoardView: UIView {
             
             var pieceImageName = piece.ImageName
                 
-            if (piece.isGhost){
+            if (piece.isLeaving || piece.isArriving){
                 pieceImageName = "ghost"+pieceImageName
             }
             
             let pieceImage = UIImage(named: pieceImageName)
             
-            // rotate pieces whose assigned box of isLeft does not match their image file
-            // -> draw normally
-            if ((piece.ImageName.contains("1") && piece.isLeft) || (piece.ImageName.contains("2") && !piece.isLeft)){
+            // If piece is arriving, draw it in corner, always right way up
+            if piece.isArriving{
+                if piece.ImageName.contains("1"){
+                    pieceImage?.draw(in: CGRect(x: BoardAnchorX + CGFloat(piece.col) * squareSize, y: BoardAnchorY + CGFloat(piece.row) * squareSize, width: squareSize/2, height:squareSize/2))
+                }
+                if piece.ImageName.contains("2"){
+                    pieceImage?.draw(in: CGRect(x: BoardAnchorX + CGFloat(piece.col) * squareSize + squareSize/2, y: BoardAnchorY + CGFloat(piece.row) * squareSize, width: squareSize/2, height:squareSize/2))
+                }
+            }
+            
+            // Otherwise, draw it full size, with rotation if assigned box of isLeft does not match image file, i.e.
+                // -> draw normally
+            else if ((piece.ImageName.contains("1") && piece.isLeft) || (piece.ImageName.contains("2") && !piece.isLeft)){
                 pieceImage?.draw(in: CGRect(x: BoardAnchorX + CGFloat(piece.col) * squareSize, y: BoardAnchorY + CGFloat(piece.row) * squareSize, width: squareSize, height:squareSize))
             }
-            // -> draw rotated
+                // -> draw rotated
             else{
                pieceImage?.rotate(radians: .pi).draw(in: CGRect(x: BoardAnchorX + CGFloat(piece.col) * squareSize, y: BoardAnchorY + CGFloat(piece.row) * squareSize, width: squareSize, height:squareSize))
             }
