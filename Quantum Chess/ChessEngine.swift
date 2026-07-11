@@ -8,7 +8,10 @@
 import Foundation
 
 struct ChessEngine {
+    // TODO: make pieces an array, with all attendant fixes, or somehow ensure that distinct pawns, knights etc. treated as individual
     var pieces: Set<ChessPiece> = Set<ChessPiece>()
+    var capturedCount: Int = 0
+    
     var whitesTurn: Bool = true
     var firstHalfTurn: Bool = true
     
@@ -22,10 +25,8 @@ struct ChessEngine {
     var piece2IsWhite: Bool = true
     var targetPieces1: Set<ChessPiece> = Set<ChessPiece>()
     var targetPieces2: Set<ChessPiece> = Set<ChessPiece>()
-    
-    // the old position of the first half piece moved is also stored
-    //var ghostPiece: ChessPiece = ChessPiece(col: -1,row: -1, ImageName: "",isWhite: true, isLeft: true,isLeaving: true)
-    //var newString: String = ""
+    // TODO: make all collections of pieces Arrays instead of Sets?
+
     
     mutating func movePiece(fromCol: Int, fromRow: Int, isLeftBegin: Bool, toCol: Int, toRow: Int){
         print("turn number: ",turnNumber)
@@ -112,12 +113,12 @@ struct ChessEngine {
             if targetPieces1.isEmpty{
                 print("Empty target square")
             }
+            
             //if two half-pieces move to same square and target pieces are all of opposite colour, delete all target pieces and make move.
             else if targetPieces1.allSatisfy({$0.isWhite != whitesTurn}){
-                print("Capture")
-                for piece in targetPieces1{
-                    pieces.remove(piece)
-                }
+                
+                capturePieces(targetPieces: targetPieces1)
+                
             }
             
             // if two half-pieces move to same square, but at least one target piece is the same colour, cancel move.
@@ -279,6 +280,20 @@ struct ChessEngine {
             }
         }
         return pieceList
+    }
+    
+    // Makes capture
+    mutating func capturePieces(targetPieces: Set<ChessPiece>){
+        print("Capture")
+        
+        for piece in targetPieces{
+            print(capturedCount)
+            pieces.insert(ChessPiece(capturedCount: capturedCount, ImageName: piece.ImageName, isWhite: piece.isWhite, isLeft: piece.isLeft))
+            //pieces.insert(ChessPiece(col: 0, row: ,))
+            pieces.remove(piece)
+            capturedCount += 1
+            
+        }
     }
     
     mutating func initializeGame(){

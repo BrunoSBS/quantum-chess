@@ -16,7 +16,8 @@ struct ChessPiece: Hashable {
     let isLeft: Bool // true: occupies left side of square, false: on right side
     let isLeaving: Bool // true: is tentative departure square, false: default
     let isArriving: Bool // true: is tentative destination square, false: default
-    
+    let isCaptured: Bool // true: has been captured
+    let id = UUID() // unique identifier
     // Default initialisation
     init (col: Int, row: Int, ImageName: String, isWhite: Bool, isLeft: Bool){
         self.col = col
@@ -26,6 +27,7 @@ struct ChessPiece: Hashable {
         self.isLeft = isLeft
         isLeaving = false
         isArriving = false
+        isCaptured = false
     }
     
     // Initialisation when we want to specify isTentative, isGhost
@@ -37,9 +39,21 @@ struct ChessPiece: Hashable {
         self.isLeft = isLeft
         self.isLeaving = isLeaving
         self.isArriving = isArriving
+        isCaptured = false
     }
 
+    // Initialisation for captured pieces
+    init ( capturedCount: Int, ImageName: String, isWhite: Bool, isLeft: Bool){
+        self.ImageName = ImageName
+        self.isWhite = isWhite
+        self.isLeft = isLeft
+        isLeaving = false
+        isArriving = false
+        isCaptured = true
+        self.col = capturedCount
+        self.row = 9
     
+    }
 }
 
 //TODO: insert extra features of piece for cleaner separation of presentation (ImageName) and internal identity (distinguishing it from other pieces of same type, and remaining the same under image being modified)

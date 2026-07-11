@@ -42,6 +42,7 @@ class BoardView: UIView {
     
     // Pieces
     var pieces = Set<ChessPiece>()
+    var capturedPieces = Set<ChessPiece>()
     // placeholder for piece image?
     //var pieceImage: UIImage? = nil
     
@@ -151,11 +152,10 @@ class BoardView: UIView {
                 continue
             }
             
-            
-            
-            
+
             var pieceImageName = piece.ImageName
                 
+            // if piece move is tentative, draw it faded
             if (piece.isLeaving || piece.isArriving){
                 pieceImageName = "ghost"+pieceImageName
             }
@@ -181,13 +181,8 @@ class BoardView: UIView {
             else{
                pieceImage?.rotate(radians: .pi).draw(in: CGRect(x: BoardAnchorX + CGFloat(piece.col) * squareSize, y: BoardAnchorY + CGFloat(piece.row) * squareSize, width: squareSize, height:squareSize))
             }
-            
-            //pieceImage?.draw(in: CGRect(x: BoardAnchorX + CGFloat(piece.col) * squareSize, y: BoardAnchorY + CGFloat(piece.row) * squareSize, width: squareSize, height:squareSize))
         }
-        
         // draw moving piece
-        
-        
         movingPieceImage?.draw(in: CGRect(x: movingPieceX, y: movingPieceY, width: squareSize, height: squareSize))
     }
     
@@ -196,6 +191,8 @@ class BoardView: UIView {
         color.setFill()
         path.fill()
     }
+    
+    
     
     
 
