@@ -81,9 +81,11 @@ class BoardView: UIView {
         let first = touches.first!
         let fingerLocation = first.location(in: self)
         
-        //TODO: fix touches to left and above board counting as on row/col zero due to integer casting
-        colTouchBegin = Int( (fingerLocation.x - BoardAnchorX)/squareSize )
-        rowTouchBegin = Int( (fingerLocation.y - BoardAnchorY)/squareSize )
+        
+        colTouchBegin = Int( (fingerLocation.x - BoardAnchorX)/squareSize + 1) - 1
+        rowTouchBegin = Int( (fingerLocation.y - BoardAnchorY)/squareSize + 1) - 1
+        //TODO: nicer way (besides +-1) to fix touches to left and above board counting as on row/col zero due to integer casting?
+        
         isLeftTouchBegin = Int(2*(fingerLocation.x - BoardAnchorX)/squareSize) % 2 == 0
         //isLeftTouchBegin = (fingerLocation.x - BoardAnchorX).truncatingRemainder(dividingBy: squareSize)<0.5*squareSize
 
@@ -156,6 +158,7 @@ class BoardView: UIView {
             var pieceImageName = piece.ImageName
                 
             // if piece move is tentative, draw it faded
+            //TODO: achieve this by changing alpha, not whole extra set of assets
             if (piece.isLeaving || piece.isArriving){
                 pieceImageName = "ghost"+pieceImageName
             }

@@ -56,4 +56,3 @@ struct ChessPiece: Hashable {
     }
 }
 
-//TODO: insert extra features of piece for cleaner separation of presentation (ImageName) and internal identity (distinguishing it from other pieces of same type, and remaining the same under image being modified)
