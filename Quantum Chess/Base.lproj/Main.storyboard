@@ -23,16 +23,43 @@
                                     <constraint firstAttribute="width" secondItem="lai-7b-NM5" secondAttribute="height" multiplier="1:1" id="3u4-F1-A49"/>
                                 </constraints>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="White to move" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8zf-pr-J0w">
+                                <rect key="frame" x="257.33333333333331" y="440" width="115.66666666666669" height="21.666666666666686"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wTY-d7-C6w">
+                                <rect key="frame" x="20" y="763" width="353" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Reset"/>
+                                <connections>
+                                    <action selector="reset:" destination="BYZ-38-t0r" eventType="touchUpInside" id="4ws-sS-lJv"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Turn number: 1.0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pGP-MJ-094">
+                                <rect key="frame" x="20" y="440" width="134.66666666666666" height="22"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="wTY-d7-C6w" secondAttribute="trailing" constant="20" id="2SA-WZ-dyg"/>
+                            <constraint firstItem="pGP-MJ-094" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="6LF-Oj-GFf"/>
+                            <constraint firstItem="wTY-d7-C6w" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="6Nl-I4-lsm"/>
                             <constraint firstItem="lai-7b-NM5" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="8uS-7j-sIN"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="8zf-pr-J0w" secondAttribute="trailing" constant="20" id="EF3-8l-Rld"/>
+                            <constraint firstItem="pGP-MJ-094" firstAttribute="top" secondItem="lai-7b-NM5" secondAttribute="bottom" constant="8" id="FrJ-Wo-T0V"/>
                             <constraint firstItem="lai-7b-NM5" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="Isd-tJ-6ny"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="lai-7b-NM5" secondAttribute="trailing" constant="20" id="J3y-uc-x70"/>
                             <constraint firstItem="lai-7b-NM5" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="JMa-hI-Z6k"/>
                             <constraint firstItem="lai-7b-NM5" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="MVB-hf-brl"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="lai-7b-NM5" secondAttribute="trailing" constant="20" id="THW-qz-cEm"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="wTY-d7-C6w" secondAttribute="bottom" constant="20" id="UEE-pq-y8a"/>
+                            <constraint firstItem="8zf-pr-J0w" firstAttribute="top" secondItem="lai-7b-NM5" secondAttribute="bottom" constant="8" id="YCb-eQ-AjH"/>
                             <constraint firstItem="lai-7b-NM5" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="fnY-m4-nET"/>
                             <constraint firstItem="lai-7b-NM5" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="oP8-7c-F8O"/>
                             <constraint firstItem="lai-7b-NM5" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="s65-1a-tZE"/>
@@ -41,6 +68,8 @@
                     </view>
                     <connections>
                         <outlet property="BoardView" destination="lai-7b-NM5" id="TA5-qp-XNC"/>
+                        <outlet property="turnNumLabel" destination="pGP-MJ-094" id="czR-XO-dkR"/>
+                        <outlet property="whoseMoveLabel" destination="8zf-pr-J0w" id="Sbw-Ht-QTb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

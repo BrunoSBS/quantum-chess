@@ -23,8 +23,14 @@ struct ChessEngine {
     var toRow2: Int = -1
     var piece1IsWhite: Bool = true
     var piece2IsWhite: Bool = true
+    var targetPiecesSameColour: Bool = true
+    var thereAreOpposingPieces: Bool = false
+    
+    
     var targetPieces1: Set<ChessPiece> = Set<ChessPiece>()
     var targetPieces2: Set<ChessPiece> = Set<ChessPiece>()
+    var opposingPieceID: UUID = UUID()
+    
     // TODO: make all collections of pieces Arrays instead of Sets?
 
     
@@ -162,10 +168,54 @@ struct ChessEngine {
         if (targetPieces.count <= 1){
             return true
         }
-        // if there are two half-pieces present, currently we always cancel move
+        
+        if (targetPieces.count >= 3){
+            print("Error: more than two target pieces")
+        }
+        
+        
+        
+        else{ //i.e. 2 target pieces
+
+            for piece in targetPieces{
+                if piece.isWhite{
+                    targetPiecesSameColour = !targetPiecesSameColour
+                }
+                
+                if piece.isWhite != whitesTurn{
+                    opposingPieceID = piece.id
+                    print(opposingPieceID,piece.id)
+                    
+                    thereAreOpposingPieces = true
+                }
+            }
+        }
+        
+        // if two half-pieces of different colour, capture the opposing colour one
+        if !targetPiecesSameColour{
+            for piece in pieces{
+                if (piece.id == opposingPieceID){
+                    pieces.remove(piece)
+                    print("removed Piece")
+                }
+            }
+
+            return true
+        }
+        
+        //if two half-pieces of same, opposing colour, resolve collapse
+        if thereAreOpposingPieces{
+            resolveCollapse()
+            return false
+        }
+        
+        // if two half-pieces of same colour as moving piece, cancel
         return false
-        //TODO: if two half-pieces of different colour, capture the opposing colour one
-        //TODO: if two half-pieces of same, opposing colour, resolve collapse
+    }
+    
+    
+    mutating func resolveCollapse(){
+        print("Collapse!")
     }
     //.rotate(radians: .pi).
     
@@ -300,6 +350,8 @@ struct ChessEngine {
         pieces.removeAll()
         
         whitesTurn = true
+        firstHalfTurn = true
+        turnNumber = 0
 
         pieces.insert(ChessPiece(col: 0, row: 0, ImageName: "Half1Rook-Black",isWhite: false, isLeft: true))
         pieces.insert(ChessPiece(col: 0, row: 0, ImageName: "Half2Rook-Black",isWhite: false, isLeft: false))
