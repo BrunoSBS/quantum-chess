@@ -74,9 +74,7 @@ class BoardView: UIView {
         drawPieces()
 
     }
-    
-    
-    
+    //TODO: visualise legal moves of piece (to start with, take knight moves for all, ignoring occupancy)
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let first = touches.first!
         let fingerLocation = first.location(in: self)

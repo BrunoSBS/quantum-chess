@@ -34,6 +34,14 @@ struct ChessEngine {
     // TODO: make all collections of pieces Arrays instead of Sets?
 
     
+    struct Square: Equatable, Hashable {
+        let col: Int
+        let row: Int
+        var isOnBoard: Bool {
+                col >= 0 && col < 8 && row >= 0 && row < 8
+            }
+    }
+    
     mutating func movePiece(fromCol: Int, fromRow: Int, isLeftBegin: Bool, toCol: Int, toRow: Int){
         print("turn number: ",turnNumber)
         //TODO: make moving piece ghost piece, have piece in initial spot become ghost piece immediately?
@@ -163,7 +171,12 @@ struct ChessEngine {
     
     // Function that checks legality of move of one half-piece on its own to a target square
     // i.e. it checks the first half-move, and if two half-pieces move to different squares, each will be resolved here too
+    //TODO: there is currently bug where half-pawns can't move to a space with any opposing pieces
     mutating func resolveHalfMove(col: Int, row: Int, whitesTurn: Bool, targetPieces: Set<ChessPiece>)->Bool{
+        
+        thereAreOpposingPieces = false
+        
+        
         // if there is one or zero pieces in the square being moved to, then the half-move is legal
         if (targetPieces.count <= 1){
             return true
@@ -174,9 +187,8 @@ struct ChessEngine {
         }
         
         
-        
         else{ //i.e. 2 target pieces
-
+            // record if target pieces are same colour, and if there is a piece of opposing colour (thus, if both true, both target pieces are opposing colour)
             for piece in targetPieces{
                 if piece.isWhite{
                     targetPiecesSameColour = !targetPiecesSameColour
@@ -188,6 +200,7 @@ struct ChessEngine {
                     
                     thereAreOpposingPieces = true
                 }
+                
             }
         }
         
@@ -206,7 +219,7 @@ struct ChessEngine {
         //if two half-pieces of same, opposing colour, resolve collapse
         if thereAreOpposingPieces{
             resolveCollapse()
-            return false
+            return false // currently we haven't actually resolved a collapse so we make this illegal
         }
         
         // if two half-pieces of same colour as moving piece, cancel
@@ -308,6 +321,20 @@ struct ChessEngine {
         }
         
         return true
+    }
+    
+    //TODO:  turn all instances of Col and Row to Square?
+    func knightMoves(fromCol: Int, fromRow: Int)->[Square]{
+        var moves: [Square] = []
+        
+        let offsets = [(-2,-1), (-2,1), (-1,-2), (-1,2),
+                           (1,-2), (1,2), (2,-1), (2,1)]
+        
+        for offset in offsets {
+            moves.append(Square(col: fromCol + offset.0, row: fromRow + offset.1))
+        }
+        
+        return moves.filter{$0.isOnBoard}
     }
     
     
