@@ -61,8 +61,9 @@ class BoardView: UIView {
     var movingPieceX: CGFloat = -1
     var movingPieceY: CGFloat = -1
     
-    
-    
+    //var otherHalfPieceImage: UIImage? = nil
+    var otherHalfCoords: (x: CGFloat, y: CGFloat)? = nil
+
     
     override func draw(_ rect: CGRect) {
         // Drawing code
@@ -70,10 +71,10 @@ class BoardView: UIView {
         BoardAnchorY = bounds.height  * (1 - boardProportion)/2
         squareSize=bounds.width * boardProportion / 8
         drawBoard()
-        
+        drawOtherHalfLine()
         drawPieces()
-
     }
+    
     //TODO: visualise legal moves of piece (to start with, take knight moves for all, ignoring occupancy)
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let first = touches.first!
@@ -101,7 +102,16 @@ class BoardView: UIView {
                 movingPieceImage = UIImage(named: movingPiece.ImageName)?.rotate(radians: .pi)
                 //movingPieceImage?.rotate(radians: .pi).draw(in: CGRect(x: movingPieceX, y: movingPieceY, width: squareSize, height: squareSize))
             }
+            
+            // Record position of other half piece corresponding to moving piece
+            for piece in pieces{
+                if piece.id == movingPiece.otherHalfId{
+                    otherHalfCoords = (x: CGFloat(piece.col)*squareSize + BoardAnchorX, y: CGFloat(piece.row)*squareSize + BoardAnchorY)
+                }
+            }
         }
+        
+        
         
     }
     
@@ -127,6 +137,7 @@ class BoardView: UIView {
         colTouchBegin = -1
         rowTouchBegin = -1
         isLeftTouchBegin = true
+        otherHalfCoords = nil
     }
     
     
@@ -187,12 +198,37 @@ class BoardView: UIView {
         movingPieceImage?.draw(in: CGRect(x: movingPieceX, y: movingPieceY, width: squareSize, height: squareSize))
     }
     
+    func drawOtherHalfLine(){
+//        // Check if piece is the one that is moving
+//        for piece in pieces {
+//            if colTouchBegin==piece.col && rowTouchBegin==piece.row && isLeftTouchBegin==piece.isLeft{
+//                piece.otherHalfId
+//            }
+//        }
+        guard let coords = otherHalfCoords else { return }
+        drawLine(fromX: movingPieceX + 0.5*squareSize, fromY: movingPieceY + 0.5*squareSize, toX: coords.x + 0.5*squareSize, toY: coords.y + 0.5*squareSize)
+    }
+    
     func drawSquare(col: Int, row: Int, color: UIColor){
         let path=UIBezierPath(rect: CGRect(x: BoardAnchorX + CGFloat(col) * squareSize, y: BoardAnchorY + CGFloat(row) * squareSize , width: squareSize, height: squareSize))
         color.setFill()
         path.fill()
     }
     
+    
+    func drawLine(fromX: CGFloat, fromY: CGFloat, toX: CGFloat, toY: CGFloat){
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: toX, y: toY))
+        path.addLine(to: CGPoint(x: fromX, y: fromY))
+        
+        path.close()
+
+            // If you want to stroke it with a red color
+        UIColor.cyan.withAlphaComponent(0.5).set()
+        path.lineWidth = 3
+        path.stroke()
+
+    }
     
     
     
